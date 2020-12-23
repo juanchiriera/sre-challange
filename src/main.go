@@ -52,6 +52,14 @@ func createBasket(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(basket)
 }
 
+//API Call to delete basket
+func deleteBasket(w http.ResponseWriter, r *http.Request) {
+	basket = nil
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(basket)
+}
+
 //API Call to add product to basket
 func addProduct(w http.ResponseWriter, r *http.Request) {
 	productCode := mux.Vars(r)["productCode"]
@@ -99,6 +107,7 @@ func main() {
 	router.HandleFunc("/basket", getBasket).Methods("GET")
 	router.HandleFunc("/total", getTotal).Methods("GET")
 	router.HandleFunc("/basket", createBasket).Methods("POST")
+	router.HandleFunc("/basket", deleteBasket).Methods("DELETE")
 	router.HandleFunc("/product/{productCode}", addProduct).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":8080", router))
