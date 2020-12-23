@@ -14,7 +14,7 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile.deploy --tag juanchiriera/sre-challange:$(date +%s)
     - name: Publish Docker image
-      run: docker push juanchiriera/sre-challange:$(date +%s)
+      run: docker push juanchiriera/sre-challange
     
   
   
