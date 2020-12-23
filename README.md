@@ -9,18 +9,47 @@ Navigate to the root application directory (where this file exists). Then, you m
 
     docker build -t sre-challange-deploy -f Dockerfile.deploy .
     docker run -p 8080:8080 sre-challange-deploy
+
 ## The API
 Here is a list of all the endpoints provided by the API. There is an example of their usage and the expected response.
-### Add a new Item to the basket
-
 ### Create new Basket instance
 
+    curl --location --request POST 'localhost:8080/basket'
+
+### Add a new Item to the basket
+
+#### Pen
+    curl --location --request POST 'localhost:8080/product/PEN'
+#### Mug
+    curl --location --request POST 'localhost:8080/product/MUG'
+#### T-Shirt
+    curl --location --request POST 'localhost:8080/product/TSHIRT'
+
 ### Delete basket
+    curl --location --request DELETE 'localhost:8080/basket'
 
 ### Get total price for basket
+    curl --location --request GET 'localhost:8080/total'
+
+### View all the contents of the basket
+    curl --location --request GET 'localhost:8080/basket'
 
 ## Running tests
 In order to run application unit tests, you'll have to run the following command:
 
     go test -v
+
+These tests consist of the examples shown in the excersise file provided on the challange. They are as follows:
+
+    Items: PEN, TSHIRT, MUG
+    Total: 32.50€
+
+    Items: PEN, TSHIRT, PEN
+    Total: 25.00€
+
+    Items: TSHIRT, TSHIRT, TSHIRT, PEN, TSHIRT
+    Total: 65.00€
+
+    Items: PEN, TSHIRT, PEN, PEN, MUG, TSHIRT, TSHIRT
+    Total: 62.50€
 
