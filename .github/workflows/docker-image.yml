@@ -10,9 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-go@v2.1.3
-    - name: Test Application
-      run: cd src && go mod download && go mod verify && go test -v
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --file Dockerfile.deploy --tag juanchiriera/sre-challange:$(date +%s)
