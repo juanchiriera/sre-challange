@@ -1,30 +1,100 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
+	"math"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
 type product struct {
-	code  string  `json:"code"`
-	name  string  `json:"name"`
-	price float64 `json:"price"`
+	Code  string  `json:"code"`
+	Name  string  `json:"name"`
+	Price float64 `json:"price"`
 }
 
-type basket []product
+type productList []product
+
+var basket productList
+
+var products = []product{
+	{
+		Code:  "PEN",
+		Name:  "Lana Pen",
+		Price: 5.0,
+	},
+	{
+		Code:  "TSHIRT",
+		Name:  "Lana T-Shirt",
+		Price: 20.0,
+	},
+	{
+		Code:  "MUG",
+		Name:  "Lana Coffee Mug",
+		Price: 7.50,
+	},
+}
 
 func getBasket(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "My empty basket!")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(basket)
 }
 
 func createBasket(w http.ResponseWriter, r *http.Request) {
+	basket = productList{}
+	w.WriteHeader(http.StatusCreated)
 
+	json.NewEncoder(w).Encode(basket)
+}
+
+func addProduct(w http.ResponseWriter, r *http.Request) {
+	productCode := mux.Vars(r)["productCode"]
+	for _, currentProduct := range products {
+		if currentProduct.Code == productCode {
+			basket = append(basket, currentProduct)
+			w.WriteHeader(http.StatusCreated)
+			json.NewEncoder(w).Encode(basket)
+			log.Print(basket)
+		}
+	}
+}
+
+func calculateTotal(basket productList, total *float64) {
+	penCounter := 0
+	tshirtCounter := 0.0
+	for _, product := range basket {
+		*total += product.Price
+		if product.Code == "PEN" {
+			penCounter++
+		} else if product.Code == "TSHIRT" {
+			tshirtCounter++
+		}
+	}
+	if penCounter > 1 {
+		*total = *total - (math.Round(float64(penCounter)/2-0.3))*5.0
+	}
+	if tshirtCounter >= 3 {
+		*total = *total - tshirtCounter*5.0
+	}
+}
+
+func getTotal(w http.ResponseWriter, r *http.Request) {
+	total := 0.0
+	calculateTotal(basket, &total)
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Total: %v", total)
 }
 
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/basket", getBasket).Methods("GET")
+	router.HandleFunc("/total", getTotal).Methods("GET")
+	router.HandleFunc("/basket", createBasket).Methods("POST")
+	router.HandleFunc("/product/{productCode}", addProduct).Methods("POST")
+
+	log.Fatal(http.ListenAndServe(":8080", router))
 
 }
