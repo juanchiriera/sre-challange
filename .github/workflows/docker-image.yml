@@ -23,7 +23,11 @@ jobs:
         go mod verify
         go test -v
         
-        
+    - name: Login to DockerHub
+      uses: docker/login-action@v1 
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASSWORD }}    
     - name: Build the Docker image
       run: docker build . --file Dockerfile.deploy --tag juanchiriera/sre-challange:$(date +%s)
     - name: Publish Docker image
