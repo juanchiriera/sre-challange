@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+//Method to add items to the basket
 func addProductToBasket(basket *productList, productCode string) {
 	for _, currentProduct := range products {
 		if currentProduct.Code == productCode {

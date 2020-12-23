@@ -38,11 +38,13 @@ var products = []product{
 	},
 }
 
+//API Call to get basket items
 func getBasket(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(basket)
 }
 
+//API Call to create new basket
 func createBasket(w http.ResponseWriter, r *http.Request) {
 	basket = productList{}
 	w.WriteHeader(http.StatusCreated)
@@ -50,6 +52,7 @@ func createBasket(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(basket)
 }
 
+//API Call to add product to basket
 func addProduct(w http.ResponseWriter, r *http.Request) {
 	productCode := mux.Vars(r)["productCode"]
 	for _, currentProduct := range products {
@@ -62,6 +65,15 @@ func addProduct(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//API Call to get the total value
+func getTotal(w http.ResponseWriter, r *http.Request) {
+	total := 0.0
+	calculateTotal(basket, &total)
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Total: %v", total)
+}
+
+//Calculate the total value of the items in the basket
 func calculateTotal(basket productList, total *float64) {
 	penCounter := 0
 	tshirtCounter := 0.0
@@ -81,13 +93,7 @@ func calculateTotal(basket productList, total *float64) {
 	}
 }
 
-func getTotal(w http.ResponseWriter, r *http.Request) {
-	total := 0.0
-	calculateTotal(basket, &total)
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Total: %v", total)
-}
-
+//Main application
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/basket", getBasket).Methods("GET")
