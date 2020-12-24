@@ -2,13 +2,23 @@
 
 Hi, this is my SRE Code Challange! Just a friendly reminder: it's my first time writing code in Go!
 
-## Build & Deploy the application
+## Build & Deploy the application Locally
 In order to build your application, you need to have docker (or podman) installed. 
 
 Navigate to the root application directory (where this file exists). Then, you may run the following commands:
 
     docker build -t sre-challange-deploy -f Dockerfile.deploy .
     docker run -p 8080:8080 sre-challange-deploy
+
+## CI Deplyment
+The application has a CI lifecycle via GitHub Actions. It performs the following steps: 
+- Unit Tests
+- Build application
+- Publish application to DockerHub
+
+The image is published as `juanchiriera/sre-challange:latest`, you can access to it executing `docker pull juanchiriera/sre-challange:latest`
+
+The **CI yaml file** can be found [here](./.github/workflows/docker-image.yml).
 
 ## The API
 Here is a list of all the endpoints provided by the API. There is an example of their usage and the expected response.
